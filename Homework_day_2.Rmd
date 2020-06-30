@@ -1,0 +1,188 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+stock_prices
+```
+
+
+```{r}
+days_of_week <- rep(c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"), times =2)
+```
+
+```{r}
+days_of_week
+```
+
+```{r}
+days_of_week_factor <- as.factor(days_of_week)
+```
+```{r}
+days_of_week_factor
+```
+
+```{r}
+named_stock_prices
+```
+
+
+```{r}
+names(numbers) <- c("first", "second", "third", "fourth")
+```
+
+```{r}
+names
+```
+
+```{r}
+numbers
+```
+
+```{r}
+
+stock_data <- data.frame(fish = stock_prices, pies = days_of_week)
+```
+```{r}
+View(stock_data)
+stock_data <- data.frame(stock_prices = stock_prices, days_of_week = days_of_week)
+```
+
+```{r}
+stock_data
+```
+```{r}
+View(stock_data)
+```
+
+```{r}
+stock_list <- list(price = stock_prices, day = days_of_week, data = stock_data)
+```
+
+```{r}
+stock_list <- list(stock_prices = stock_prices, days_of_week = days_of_week, stock_data = stock_data)
+```
+
+```{r}
+stock_list
+```
+
+```{r}
+stock_prices[4,5,6]
+```
+
+```{r}
+stock_prices [4]
+stock_prices[5]
+stock_prices[6]
+```
+
+```{r}
+stock_prices [stock_prices > 30]
+```
+
+```{r}
+stock_data 
+```
+
+```{r}
+stock_data [,2]
+```
+
+```{r}
+stock_data [stock_prices<25]
+```
+```{r}
+stock_data [,2<10]
+```
+
+```{r}
+stock_data [1,]
+```
+
+```{r}
+stock_data
+
+```
+
+```{r}
+stock_data [3,]
+```
+
+```{r}
+stock_data [1,]
+```
+
+```{r}
+stock_data [,1]
+```
+
+```{r}
+stock_data [3,1]
+```
+
+```{r}
+library(tidyquant)
+```
+
+```{r}
+install.packages("tidyquant")
+
+```
+\
+```{r}
+library(tidyquant)
+
+```
+
+```{r}
+tq_get(1)
+```
+
+```{r}
+tq_get_options()
+
+```
+
+```{r}
+tsla_prices <- tq_get("TSLA", get = "stock.prices")
+```
+
+```{r}
+TSLA
+```
+
+```{r}
+aapl_prices <- tq_get("AAPL", get = "stock.prices")
+```
+
+```{r}
+tq_get(c("AAPL", "GOOG", "FB"), get = "stock.prices")
+```
+
+```{r}
+tq_get(c("TSLA"), get = "stock.prices")
+```
+```{r}
+class(tsla_prices)
+```
+
+```{r}
+tsla_prices
+```
+
+tq_get(c("AAPL"), get = "stock.prices")
+```{r}
+tq_get(c("AAPL"), get = "stock.prices")
+```
+
+```{r}
+
+tq_get(c("AAPL"), get = "stock.prices", from = "2020-01-01"
+```
+
+```{r}
+aapl_prices  <- tq_get("AAPL", get = "stock.prices", from = " 1990-01-01")
+```
+
