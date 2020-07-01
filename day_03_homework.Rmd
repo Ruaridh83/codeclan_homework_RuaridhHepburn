@@ -1,0 +1,45 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+install.packages('devtools')
+devtools::install_github('codeclan/CodeClanData')
+library(CodeClanData)
+
+```
+
+Opening the data from called "beer" from within the CodeClan datasets package
+
+```{r}
+
+CodeClanData::temp
+
+mean(temp)
+
+
+```
+average temp of all months and all years
+
+```{r}
+mean(temp)
+
+```
+maximum temp
+```{r}
+max(temp)
+```
+
+```{r}
+data <- temp
+```
+
+```{r}
+data[1,2]
+```
+
+```{r}
+
+```
+
