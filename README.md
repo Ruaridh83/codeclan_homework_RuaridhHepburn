@@ -1,3 +1,3 @@
-# codeclan_homework_RuaridhHepburn
+# Homework Readme
 
 This file contains my homework
