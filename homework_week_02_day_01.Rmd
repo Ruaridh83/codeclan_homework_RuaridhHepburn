@@ -1,0 +1,104 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within 
+
+```{r}
+install.packages("readr")
+library(readr)
+```
+Read in the state_income_data.csv file using the appropriate function
+
+
+```{r}
+state_income <- read.csv("data/state_income_data.csv")
+state_income
+```
+
+How do you specify your own column names when using read_csv()?
+
+col_names =
+
+```{r}
+cars <- read_csv("data/cars.csv")
+```
+
+```{r}
+cars
+
+```
+Read in the cars.csv file and use the col_types() function to ensure you load in:
+
+X1 as character
+mpg, cyl, disp, hp as double
+vs as logical
+
+so only need to change vs
+```{r}
+car_data <- read_csv("data/cars.csv", col_types = cols( X1 = col_character(), 
+                      vs = col_logical()))
+```
+
+```{r}
+car_data
+```
+Read in the scotland.txt file using the appropriate function.
+
+```{r}
+scotland <- read_table("data/scotland.txt")
+```
+```{r}
+scotland
+scotlanddf <- as.matrix.data.frame(scotland, row.names = "Rank", "locality", "population", "status", "council area")
+```
+```{r}
+scotland <- read_csv("data/scotland.txt")
+scotland
+```
+How do you read text into a one element character vector?
+
+Use readr as it reads strings as character vectors, not factors
+
+------------------------------------------------------------------
+Read in the steam-200k-sample.csv file. Fix any problems you may encounter.
+Missing column names filled in: 'X3' [3], 'X4' [4], 'X5' [5]Error in make.names(x) :
+
+Read the terminal and then used skip 4
+```{r}
+steams <- read_tsv("data/steam-200k-sample.csv", skip = 4)
+steams
+
+```
+```{r}
+video_games <- read_csv("data/steam-200k-sample.csv")
+```
+
+```{r}
+euro <- read_tsv("data/historic_eu_payments.tsv")
+euro
+```
+How do you read lines of text into a multi-element text vector?
+```{r}
+read_lines
+```
+
+```{r}
+
+library(jsonlite)
+jsonfile <- read_file("http://makemeanalyst.com/wp-content/uploads/2017/06/sample_json.txt")
+jsonfile
+
+prettify(jsonfile)
+parsedJson <- parse_json(jsonfile)
+newjason <- fromJSON(parsedJson)
+```
+
+```{r}
+
+```
+
+
+
+
