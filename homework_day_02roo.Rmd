@@ -1,0 +1,45 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Create a local PostgreSQL database called wrestling
+
+```{r}
+source("/Users/user/credentials.R")
+```
+
+```{r}
+library(RPostgreSQL)
+```
+
+```{r}
+home_location <- Sys.getenv("HOME")
+credentials_location <- paste0(home_location,"/credentials.R")
+source(credentials_location)
+```
+
+```{r}
+my_db_connection <- dbConnect(drv = PostgreSQL(max.con = 2), user = postgresql_username, password = postgresql_password, dbname = 'wrestling', host = 'localhost')
+my_db_connection
+```
+```{r}
+dbDisconnect(conn = my_db_connection)
+```
+
+```{r}
+my_db_connection
+```
+
+```{r}
+dbListTables(conn = my_db_connection)
+```
+
+```{r}
+data <- dbGetQuery(conn = my_db_connection, statement = "SELECT * FROM wrestling")
+```
+
+```{r}
+ dbListFields(conn = my_db_connection, name = "wrestling")
+```
+
+I have ran out of ideas!!!
