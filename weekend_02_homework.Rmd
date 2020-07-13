@@ -1,0 +1,122 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+
+```
+
+```{r}
+library(RPostgreSQL)
+library(DBI)
+home_location <- Sys.getenv("HOME")
+credentials_location <- paste0(home_location,"/credentials.R")
+source(credentials_location)
+
+db_connect <- dbConnect(drv = PostgreSQL(), user = postgresql_username, password = postgresql_password, dbname = "acme_employees", host = "localhost")
+
+rm(postgresql_username, postgresql_password)
+```
+
+
+```{r}
+dbListTables(db_connect)
+```
+I am running this to get an idea of what info is contained on each table. 
+```{sql connection=db_connect}
+SELECT * FROM 
+employees
+
+
+```
+
+
+```{sql connection=db_connect}
+SELECT * FROM
+teams
+```
+```{sql connection=db_connect}
+SELECT * FROM
+feedbacks
+```
+Create a new data.frame containing the details of all employees held in the database
+
+
+```{sql connection=db_connect}
+
+```
+This code lists all the tables in the database to which you are connected, it runs in R. 
+
+```{r}
+dbListTables(conn = db_connect)
+```
+
+```{r}
+dbListFields(conn = db_connect, name = "employees")
+```
+
+```{r}
+dbListFields(conn = db_connect, name = "feedbacks")
+```
+
+Create a new data.frame containing the details of all employees held in the database
+
+```{r}
+employee_data <- dbGetQuery(conn = db_connect, statement = "SELECT * FROM employees")
+employee_data
+```
+```{sql connection=db_connect}
+employees
+
+```
+```{r}
+employee_data
+```
+
+```{sql connection=db_connect}
+
+```
+Retrieve the records for all employees again, but this time add a field full_name containing the first_name and last_name of each employee separated by a space.
+
+
+```{r}
+employee_data["full_name"] <- c("first_name", "last_name")
+employee_data
+```
+Retrieve the records for all employees again, but this time add a field full_name containing the first_name and last_name of each employee separated by a space.
+
+
+```{r}
+employee_data$full_name = paste(employee_data$first_name,employee_data$last_name)
+employee_data
+```
+Retrieve the details of all employees again, but this time listing their team name (as team_name), rather than their team_id.
+
+This is frustrating as i think the way to solve it is by changing the integer to a character but i cant figure out how to do it, have tried numerous ways and googled error messages, went through notes and prev code but can't figure it out. 
+```{sql connection=db_connect}
+SELECT 
+  a.*, 
+  d.*
+FROM employees AS a 
+LEFT JOIN teams AS d
+ON a.team_id AS d.name
+```
+
+Bit Harder] Do a breakdown of the number of employees per team (here we want two columns: team_name and num_employees). Order the table in decreasing number of employees. Include all teams, even if they have no employees.
+
+
+```{sql connection=db_connect}
+SELECT *
+FROM 
+
+
+```
+
+
+
+
+
+```{r}
+
+```
+
