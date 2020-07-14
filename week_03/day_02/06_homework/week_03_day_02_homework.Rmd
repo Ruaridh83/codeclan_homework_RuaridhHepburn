@@ -1,0 +1,99 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+read_csv("
+         face_descriptions.csv")
+```
+```{r}
+face_descriptions <- read_csv("data/face_descriptions.csv")
+```
+Let’s start by loading the tidyverse library and reading the data in. You learned earlier this week how to get a feel for your data when you first load it in. Find out the dimensions, variable names, and print the first 10 rows.
+
+```{r}
+face_descriptions
+```
+```{r}
+dim(face_descriptions)
+```
+```{r}
+names(face_descriptions)
+```
+
+```{r}
+top_ten <- top_n(face_descriptions,10)
+top_ten
+```
+Question 2
+Do these variable names look tidy to you? What format is your data in (long or wide)?
+
+##These variables are not tidy, some are in different alphabets(?) some are missing, they have lots of spaces and different punctuation.  Data is wide
+
+Question 3
+Being faced with such complex data can be daunting, we may feel overwhelmed and ask ourselves:
+
+How can I organise this data?
+How can I make this data meaningful?
+How can I make this data tidy?
+The first problem you can always tackle is to get your data in an appropriate format. What format do you need?
+
+Once you have figured that out, reshape the data into the appropriate format.
+
+Hint Use the pivot_longer() function to gather the data into long format. You’ll need to put all columns beginning with t into one column.
+
+```{r}
+wide_faces <- face_descriptions%>%
+  pivot_longer(cols = c("t1":"t50"), 
+               names_to = "observer", 
+               values_to = "face_description") 
+
+wide_faces
+```
+Question 4
+But wait! Some people have given lengthy descriptions of the faces, some have only given one word. This can be problematic for analysis, if you eventually want to summarise key descriptions.
+
+Some people have split the description of the faces using a slash. Use the separate function to split apart the descriptions column so that if people have given more than one answer (i.e. if the data is separated by a /) it is moved into a new row.
+
+First, you’ll need to decide a cut off for how many responses you want to accept from people. Is one enough? Two? Three? Once you’ve decided how many descriptions you want to code, you’ll have to separate your description columns into that many columns.
+
+## TI can seperate bu a / but don't know how to do other punctuation and/or a space. 
+
+```{r}
+tidy_faces <- wide_faces %>% 
+  separate(face_description, c("face_description_1","face_description_2", "face_description_3"), sep = "/")
+
+tidy_faces
+```
+
+Question 5
+We’ve now split the data, and have three description variables. But is this data ACTUALLY tidy? Isn’t one of the rules that we need to have only one column per variable? And now we have more than one description variables…
+
+What do we need to do here so our description variables follow the rules of tidy data?
+
+Hint Use the pivot_longer() function to create a new description column, which will identify which description number it is (1,2,3, etc), and to create one single variable called description which contains the actual description. Save it all in a new tibble called all_descriptions.
+
+##i know this is the wrong function 
+```{r}
+all_descriptions <- tidy_faces %>%
+  unite(description, c("face_description_1", "face_description_2", "face_description_3"), sep =":")
+
+all_descriptions
+
+
+```
+
+```{r}
+install.packages("janitor")
+library(janitor)
+```
+
+```{r}
+tidy_faces
+```
+
