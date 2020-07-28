@@ -1,0 +1,119 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(CodeClanData)
+install.packages(treemapify)
+library(treemapify)
+```
+
+```{r}
+
+```
+
+#here is a graph showing how many late deliveries per month 2015-2019
+
+```{r}
+ggplot(late_deliveries) +
+  aes(x = date, y = late_deliveries) +
+  geom_col() +
+  ggtitle("Number of late deliveries per month")
+
+```
+
+```{r}
+recovery_times
+```
+#here's a chart showing the recovery times of people receiving either treatment A or B or the control group. 
+
+```{r}
+ggplot(recovery_times) +
+  aes(x = recovery, y = treatment_group, fill = prognosis) +
+  geom_col(position = "dodge") +
+  theme_bw() +
+  ggtitle("Treatment type vs Recovery time")
+```
+
+#here's a graph charting the fitness levels of 26 kids from ages 8-13.  
+
+```{r}
+ggplot(fitness_levels) +
+  aes(x = age, y = fitness_score, colour = child) +
+  geom_line() +
+  ggtitle("Fitness Levels")
+
+```
+
+```{r}
+blood_pressure
+```
+#here's a chart showing saturated f
+```{r}
+ggplot(blood_pressure) +
+  aes(x = daily_saturated_fat_intake_mg, y = systolic_blood_pressure_mm_hg) +
+  labs(x = "daily saturate fat intake in mg", y = "systolic blood pressure mm Hg") +
+  geom_point(size=2, shape=23, colour="red", fill = "black") +
+  ggtitle("          Systolic blood pressure vs Daily saturated fat intake")
+
+```
+
+```{r}
+car_use
+```
+#Here's a chart showing the population vs car use of 32 cities.  I'd like to add one element to this but don't know how, have the size of the "point" vary depending on the fourth variable in the data, the s(?)02 levels. 
+```{r}
+ggplot(car_use) +
+  aes(x = population, y = car_use_percent, colour = air_so2_concentration_ppm) +
+  geom_jitter(size=6, shape=16, fill = "black") 
+ 
+```
+```{r}
+d20_outcomes
+```
+
+#distribution bar chart showing how often each outcome was measured. 
+
+```{r}
+ggplot(d20_outcomes) +
+  aes( y = outcome) +
+  geom_histogram(binwidth=1, colour="black", fill="blue")
+  
+ 
+  
+```
+#here's another way to show the distribution i googled and changed the variables but i don't think it's as good. 
+```{r}
+ggplot(d20_outcomes, aes(x=outcome)) + 
+    geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                   binwidth=.5,
+                   colour="black", fill="white") +
+    geom_density(alpha=.2, fill="#FF6666")  # Overlay with transparent density plot
+```
+
+#here's a bar chart showing the distribution of the d205x outcomes.
+
+```{r}
+ggplot(d20x5_outcomes) +
+  aes( x = outcome) +
+  geom_histogram(binwidth=5, colour="black", fill="blue")
+```
+
+```{r}
+
+pension_surplus
+```
+
+```{r}
+ggplot(pension_surplus) +
+  aes(x="", y=balance, fill=item) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  ggtitle("this one's for Del")
+  
+  theme_void() 
+```
+
