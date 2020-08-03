@@ -35,7 +35,7 @@ ui <- fluidPage(
     
     br(),
     br(),
-    
+    #cool web links for the console manufacturers
     tags$a("Nintendo",
            href = "https://www.nintendo.com"),
     br(),
