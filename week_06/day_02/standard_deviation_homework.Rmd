@@ -1,0 +1,113 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(skimr)
+install.packages("mass")
+library(MASS)
+```
+Loading the data from the csv. 
+
+```{r}
+phone_data <- X20190928_items
+clean_names(phone_data)
+```
+removing the columns i don't need. 
+```{r}
+phone_data <- 
+  phone_data %>%
+  select(-c(url, image, reviewUrl, prices, asin,))
+```
+taking out another column i don't need. 
+```{r}
+phone_data <- 
+  phone_data %>%
+  select(-c(title))
+```
+
+```{r}
+glimpse(phone_data)
+```
+just checking for spelling and stuff in the brand column, seeing if any further cleaning required. 
+```{r}
+unique(phone_data$brand)
+```
+```{r}
+phone_data
+```
+Find the brand with the highest numbers of phones in the dataset.
+
+```{r}
+str_count(phone_data, "Samsung")
+```
+
+```{r}
+ggplot(phone_data) +
+  aes(x = brand, y = rating, fill = brand) +
+  geom_col()
+```
+Here i'm seeing what the mean and standard of the ratings for Samsung phones are. 
+```{r}
+review_stats <- phone_data %>%
+  filter(brand == "Samsung") %>%
+  summarise(
+    num = n(),
+    mean = mean(rating),
+    sd = sd(rating)
+  )
+review_stats
+```
+For your top brand, plot the distribution of phone ratings as a probability density, overlaying a fitted normal distribution. Do you think the normal distribution provides a good model of these ratings?
+
+Based on the visual info below, the data is normally distributed.
+
+```{r}
+phone_data %>% 
+  filter(brand == "Samsung") %>%
+  ggplot(aes(x = rating)) +
+  geom_histogram(aes(y = ..density..), col = "white", fill = "blue", bins = 25) +
+  stat_function(
+    fun = dnorm, 
+    args = list(
+      mean = 3.5733, 
+      sd = 0.6847859
+    ),
+    col = "red"
+  )
+```
+proportions of ratings within one-, two- and three standard deviations of the mean. 
+
+within one sd of mean is 0.79
+
+```{r}
+samsung_ratings <- phone_data %>% 
+  filter(brand == "Samsung") 
+samsung_ratings
+
+samsung_ratings %>%
+  filter(rating >= 3.5733 - 0.6847859) %>%
+  filter(rating <= 3.5733 + 0.6847859) %>%
+  summarise(prop_within_1sd = n() / nrow(samsung_ratings))
+```
+
+
+within 2 of sd
+```{r}
+samsung_ratings %>%
+  filter(rating >= 3.5733 - 2*0.6847859) %>%
+  filter(rating <= 3.5733 + 2*0.6847859) %>%
+  summarise(prop_within_1sd = n() / nrow(samsung_ratings))
+```
+within 3
+```{r}
+samsung_ratings %>%
+  filter(rating >= 3.5733 - 3*0.6847859) %>%
+  filter(rating <= 3.5733 + 3*0.6847859) %>%
+  summarise(prop_within_1sd = n() / nrow(samsung_ratings))
+```
+
