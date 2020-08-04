@@ -1,0 +1,135 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(prob)
+library(gtools)
+library(tidyverse)
+```
+#1. If I roll a six-sided dice once, what is the probability of getting a number less than 5?
+
+```{r}
+q1 <- rolldie(1) 
+q1
+```
+# 4 rows so i know that out of the 6 options 4 of them satisfy being less than 5
+```{r}
+q1 %>%
+  filter(X1 < 5)
+#then the maths is..
+
+4/6
+```
+
+#2. How many outcomes are there in the sample space of an experiment in which we toss three dice?
+
+```{r}
+q2 <- rolldie(3) 
+q2
+nrow(q2)
+#or expressed another way 6*6*6
+6*6*6
+```
+
+#3. In an experiment where we roll four dice:
+
+A)how many outcomes are in the event total_equals_5_6_7 (i.e. the total of the four dice equals 5, 6 or 7)?
+# 8 as per below
+B)what is the probability of this event?
+#8/1296 = [1] 0.00617284
+C)what assumptions do we apply in answering part ii?
+#
+```{r}
+roll_four <- rolldie(4) %>%
+  mutate(total = X1 + X2 + X3 + X4) %>%
+  filter(total == c(4:7))
+roll_four
+
+```
+
+```{r}
+8/1296
+
+
+```
+#4. Five chairs are placed in a row in a room, along with five people of differing height. The people sit down randomly on the chairs. What is the probability that they sit in order of decreasing height, left to right?
+```{r}
+chairs <- as_tibble(
+  permutations(n = 5,
+               r = 5,
+               repeats.allowed = FALSE))
+chairs
+
+#so there's 120 different height orders for them to sit, so probability is..
+
+1/120
+[1] 0.008333333
+```
+#5. I roll six dice:
+
+what is the probability I see the numbers 6, 5, 4, 3, 2 and 1 in order on the dice, left to right?
+
+what is the probability I see one each of the numbers 6, 5, 4, 3, 2 and 1 on the dice regardless of order?
+
+```{r}
+#what is the probability I see the numbers 6, 5, 4, 3, 2 and 1 in order on the dice, left to right?
+
+roll_six <- rolldie(6)
+  roll_six
+  
+  #46,656 different ways to roll 6 dice so probability is...
+  6/46656
+  
+```
+what is the probability I see one each of the numbers 6, 5, 4, 3, 2 and 1 on the dice regardless of order?
+#There's 720 differnet ways to satisfy one of each number in any order out of the poss 46656 see below for working 
+```{r}
+
+```
+#6. If I draw a single card from a 52-card deck, and it is black, what is the probability that its suit is spades?
+```{r}
+#it's .5. 
+
+#half of the black cards in a deck are spades. 
+
+
+```
+
+7. Eight patients: Alice, Bob, Carmen, Dinesh, Ella, Fergus, Gianna and Henry are waiting to see a doctor, but only five appointment slots are left today.
+
+In how many different orders can the doctor see patients today?
+6720
+
+```{r}
+patients <- c("Alice", "Bob", "Carmen", "Dinesh", "Ella", "Fergus", "Gianna","Henry")
+
+patients_comb <- as_tibble( permutations(n = 8, r = 5, v = patients, repeats.allowed = FALSE))
+patients_comb
+nrow(patients_comb)
+```
+
+What is the probability of Gianna and Danesh both being seen today? 4200/6720 = 0.625
+```{r}
+gianna_danesh <- patients_comb %>%
+  isin("Gianna", "Danesh", ordered = TRUE)
+gianna_danesh
+occurences <- table(unlist(gianna_danesh))
+
+gianna_danesh
+```
+
+(harder) Carmen and Henry have now been triaged as high priority and will be seen in the first two available slots, although their order hasn’t yet been determined. In how many different orders can the patients now be seen?
+```{r}
+patients_new <- c("Alice", "Bob", "Dinesh", "Ella", "Fergus", "Gianna")
+
+patients_triage <- as_tibble( permutations(n = 6, r = 4, v = patients_new, repeats.allowed = FALSE))
+patients_triage
+nrow(patients_triage)
+```
+
+```{r}
+
+```
+
