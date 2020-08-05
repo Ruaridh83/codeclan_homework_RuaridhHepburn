@@ -1,0 +1,110 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+sampling distribution
+inferential statistics
+bias and sampling
+bootstrapping and confidence intervals
+
+```{r}
+library(tidyverse)
+library(janitor)
+install.packages("infer")
+library(infer)
+```
+
+```{r}
+read_csv("data/ames.csv")
+```
+
+```{r}
+ames <- clean_names(ames)
+```
+
+Investigate the distribution of lot_area. Is the distribution roughly normal? If not, what problems do you find?
+
+```{r}
+lot_summary <- ames %>%
+  summarise(
+    lot_area_mean = mean(lot_area)
+    
+  )
+
+lot_summary
+```
+Looks to me like it is not normally distributed. It is right skewed and has extreme outliers (large farms?) 
+
+
+```{r}
+ames %>%
+  ggplot(aes(x = lot_area)) +
+  geom_histogram(col = "black", bins = 1000) 
+```
+Compute and visualise a bootstrap sampling distribution for the mean(lot_area) of the sold houses.
+
+First i'm using infer to specify, generate and calculate. then using ggplot to visualise below. 
+
+```{r}
+lot_mean <- ames %>%
+  specify(response = lot_area) %>%
+  generate(reps = 5000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+
+  mean(lot_mean$stat)
+```
+Compute and visualise a bootstrap sampling distribution for the mean(lot_area) of the sold houses.
+
+```{r}
+lot_mean %>%
+  ggplot(aes(x = stat)) +
+  geom_histogram(col = "black", fill = "blue", bins = 100)+
+```
+Use your bootstrap distribution to calculate a 95% CI for mean(lot_area), and visualise it on the distribution
+
+```{r}
+lot_ci <- lot_mean %>%
+  get_confidence_interval(level = 0.95, type = "percentile")
+
+lot_ci
+
+```
+
+```{r}
+lot_mean %>%
+  visualise(bins = 100) +
+  shade_confidence_interval(endpoints = lot_ci)
+```
+You would like to know the mean(lot_area) of the sold houses with higher confidence. Calculate the 99% CI for this variable (you can re-use your bootstrap distribution from above). Is it narrower or broader than the 95% CI? Does that make sense?
+
+
+```{r}
+lot_ci_99 <- lot_mean %>%
+  get_confidence_interval(level = 0.99, type = "percentile")
+
+lot_ci_99
+```
+Is it narrower or broader than the 95% CI? Does that make sense?
+
+Yes , higher the CI, the bigger the difference bettwen the upper and lower number as they've got less to fit in on either side.
+
+```{r}
+lot_ci$upper_ci -lot_ci$lower_ci
+lot_ci_99$upper_ci - lot_ci_99$lower_ci
+```
+
+Calculate the point estimate of the mean(lot_area)  ??!??!?!
+10150.27
+```{r}
+ames %>%
+  mutate(before_1920 = as.numeric(year_built < 1920))
+
+
+```
+
+```{r}
+ames %>%
+  filter(before_1920 == 1)
+```
+
