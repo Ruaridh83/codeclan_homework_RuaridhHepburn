@@ -97,14 +97,49 @@ lot_ci_99$upper_ci - lot_ci_99$lower_ci
 Calculate the point estimate of the mean(lot_area)  ??!??!?!
 10150.27
 ```{r}
-ames %>%
+ames_before_1920 <-
+  
+  ames %>%
   mutate(before_1920 = as.numeric(year_built < 1920))
 
 
 ```
 
+
+
+
+
 ```{r}
-ames %>%
-  filter(before_1920 == 1)
+bootstrap_distn_200 <- ames_before_1920 %>%
+  specify(response = before_1920) %>%
+  generate(reps = 200, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+bootstrap_distn_1000 <- ames_before_1920 %>%
+  specify(response = before_1920) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+bootstrap_distn_10000 <- ames_before_1920 %>%
+  specify(response = before_1920) %>%
+  generate(reps = 10000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+bootstrap_distn_30000 <- ames_before_1920 %>%
+  specify(response = before_1920) %>%
+  generate(reps = 30000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+
+bootstrap_distn_50000 <- ames_before_1920 %>%
+  specify(response = before_1920) %>%
+  generate(reps = 50000, type = "bootstrap") %>%
+  calculate(stat = "mean")
+```
+
+```{r}
+bootstrap_distn_1000
+bootstrap_distn_10000
+bootstrap_distn_30000
+bootstrap_distn_50000
 ```
 
