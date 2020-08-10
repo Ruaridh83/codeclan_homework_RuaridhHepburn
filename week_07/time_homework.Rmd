@@ -1,0 +1,148 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(tidyverse)
+library(tsibble)
+library(tsibbledata)
+library(feasts)
+
+
+date1 <- ymd_hms("2017-04-22 22:01:18")
+date2 <- ymd_hms("2001-11-07 10:09:56")
+```
+Question 1
+
+Extract the different components (year, month, mday, yday, wday) from the variable date1. Add the labels to the month and do not abbreviate the month labels.
+```{r}
+year(date1)
+month(date1, label = TRUE, abbr = tru)
+mday(date1)
+yday(date1)
+wday(date1)
+```
+Question 2
+
+Add 14 days to your date1 variable and store it in a variable called next_fortnight. Take away 10 years from your date2 variable, and store it in previous_decade.
+
+```{r}
+next_fortnight <- date1 + days(14)
+
+previous_decade <- date2 - years(10)
+
+next_fortnight
+previous_decade
+
+```
+
+Question 3
+
+1.Create a variable called this_year which contains today’s date. 
+2.Then create an interval object which uses this_year and the previous_decade variable you made above. 
+3.Store it in interval_years. Hint: you’ll need to use lubridate::interval in order to get the right function, as tsibble has one too
+
+```{r}
+this_year <- ymd("2020-08-10") 
+
+```
+
+```{r}
+interval_years <- this_year %--% previous_decade
+
+interval_years
+```
+Question 4
+
+Change the time zone of both your date variables to “America/New_York”, and call them nyc_date1 and nyc_date2.
+
+```{r}
+nyc_date1 <- with_tz(date1, tzone = "America/New_york")
+nyc_date2 <- with_tz(date2, tzone = "America/New_york")
+
+nyc_date1
+nyc_date2
+```
+
+Question 5
+
+Use the flights data from the nycflights13 dataset. Make a date-time column called departure_date from the year, month, day, hour, and minute variables in the flights tibble.
+
+```{r}
+library(nycflights13)
+
+
+flights
+```
+
+```{r}
+flights %>%
+  mutate(departure_date = make_datetime(year, month, day, hour, minute))
+```
+Start with the weather data from the nycflights13 package. 
+
+Select all the variables related to temperature, humidity, and precipitation, and pick out the key and index variables. 
+
+Have a look at your data, and write a small description of the time series you observe.
+
+Here we can see that our data is collected in hourly format, with observations occuring every day.
+
+
+```{r}
+weather
+```
+Our key is gonna be precip, so we'll have lot of data for when it is raining and some when it's not. 
+
+So i've got hourly observations on the temperature, humidty and precipitation levels. 
+```{r}
+weather_wet <- weather %>%
+  select(temp, humid, precip, time_hour) %>%
+  filter(precip > 0)  #the alternative here would be to put precip == 0 %>%
+
+weather_dry <- weather %>%
+  select(temp, humid, precip, time_hour) %>%
+  filter(precip == 0 )  #the alternative here would be to put precip == 0 %>%
+
+weather_dry
+weather_wet
+
+
+```
+
+Question 7
+
+Change the weather data into a tsibble. Hint, look up in the notes where we suggest using as_tsibble function. You’ll need to define an index and key.
+
+In order to create a time series tibble, remember you need to provide an index and a key. In our case, time_hour is the only column involving a date/date-time, and so this would be our index. A tsibble also requires a key, which defines individual observations that are tracked over time. In this example, the origin variable is the identifier, and therefore is our key. It is important to note that the duo of the index and key uniquely identifies each observation in a valid tsibble.
+
+```{r}
+weather <- as_tsibble(weather, key = origin, index = time_hour)
+
+weather
+
+```
+
+```{r}
+weather <- weather %>%
+  mutate(as_date(time_hour)) %>%
+  
+
+weather
+```
+
+```{r}
+weather <- weather %>%
+  mutate(year = lubridate::year(`as_date(time_hour)`)) %>%
+ mutate(month = lubridate::month(`as_date(time_hour)`))
+weather
+```
+
+```{r}
+ggplot(weather %>% filter(origin == "EWR")) + 
+  geom_line(aes(x = month, y = count), colour = "purple")
+  
+```
+
