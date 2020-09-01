@@ -1,0 +1,48 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(dplyr)
+library(CodeClanData)
+library(tidyverse)
+library(janitor)
+library(modelr)
+library(broom)
+```
+
+
+
+
+```{r}
+project_management
+
+```
+Label the data points with their row number in the data frame using geom_text() [Hint - you can pass aes(label = 1:nrow(project)) to this layer to generate row index labels]
+
+
+Identify by eye any points you think might be outliers and note their labels. 5
+
+Further split your outliers into those you think are ‘influential’ or ‘non-influential’ based on a visual assessment of their leverage.
+
+```{r}
+project <- project_management
+```
+
+```{r}
+project %>%
+  ggplot() +
+  aes(x = actual_length, y = estimated_length) +
+  geom_text(label = 1:nrow(project)) +
+  
+    geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+lm(formula = project$actual_length ~ project$estimated_length)
+```
+
+```{r}
+
+```
+
