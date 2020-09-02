@@ -1,0 +1,73 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+```
+
+
+
+```{r}
+diamonds
+
+```
+
+```{r}
+diamonds_clean <- diamonds %>%
+  select(-x, -y, -z)
+
+
+summary(diamonds_clean)
+```
+
+```{r}
+
+ggpairs(diamonds_clean)
+
+```
+
+```{r}
+  
+
+diamonds_clean %>%
+  select(carat, price) %>%
+  ggplot() +
+  aes(x = carat, y = price) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+model <- lm(price ~ carat + clarity + cut + clarity:cut + clarity:carat + cut:carat, data = diamonds_clean)
+
+summary(model)
+```
+
+```{r}
+par(mfrow = c(2,2))
+
+plot(model)
+```
+
+```{r}
+ggPredict(model, interactive = TRUE)
+```
+
+```{r}
+cor(diamonds_clean$price, diamonds_clean$carat)
+
+
+```
+
+```{r}
+diamonds_dummies <- dummy_cols(diamonds, select_columns = c("cut", "clarity", "color"), remove_first_dummy = TRUE)
+glimpse(diamonds_dummies)
+```
+
+```{r}
+mod1 <- lm(price ~ carat, data = diamonds_clean)
+par(mfrow = c(2,2))
+plot(mod1)
+```
+
