@@ -1,0 +1,127 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Weekend Homework - Model Building
+1 MVP
+We’ve looked at a few different ways in which we can build models this week, including how to prepare them properly. This weekend we’ll build a multiple linear regression model on a dataset which will need some preparation. The data can be found in the data folder, along with a data dictionary
+
+We want to investigate the avocado dataset, and, in particular, to model the AveragePrice of the avocados. Use the tools we’ve worked with this week in order to prepare your dataset and find appropriate predictors. Once you’ve built your model use the validation techniques discussed on Wednesday to evaluate it. Feel free to focus either on building an explanatory or a predictive model, or both if you are feeling energetic!
+
+As part of the MVP we want you not to just run the code but also have a go at intepreting the results and write your thinking in comments in your script.
+
+Hints and tips
+
+region may lead to many dummy variables. Think carefully about whether to include this variable or not (there is no one ‘right’ answer to this!)
+Think about whether each variable is categorical or numerical. If categorical, make sure that the variable is represented as a factor.
+We will not treat this data as a time series, so Date will not be needed in your models, but can you extract any useful features out of Date before you discard it?
+If you want to build a predictive model, consider using either leaps or glmulti to help with this.
+```{r}
+library(tidyverse)
+library(GGally)
+```
+I'm going to write a model that predicts the price of avocados based on apporpriate predictors. 
+```{r}
+avocados <- read_csv("avocado.csv")
+
+avocado <- avocados
+  
+
+```
+Checking for missing data
+```{r}
+summary(avocado)
+```
+starting to clean/wrangle data for model building.  First i'm going to address organic/conventional
+```{r}
+avocado_clean <- avocado %>%
+  mutate(organic = ifelse(type == "organic", 1, 0)) %>%
+  select(-type)
+  
+```
+
+
+```{r}
+unique(avocado_clean$year)
+
+avocado_clean_year <-
+  avocado_clean %>%
+  mutate(year_2015 = ifelse(year == 2015, 1,0)) %>%
+  mutate(year_2016 = ifelse(year == 2016, 1,0)) %>%
+  mutate(year_2017 = ifelse(year == 2017, 1,0)) %>%
+  mutate(year_2018 = ifelse(year == 2018, 1,0)) %>%
+  select(-year)
+
+avocado_clean_year
+```
+
+Removing variables i'm not going to use as predictors. 
+```{r}
+avocado_clean <- avocado_clean %>%
+  select(-Date, -region)
+
+```
+
+Start plotting possible predictors
+
+```{r}
+avocado_clean %>%
+  ggplot(aes(x = AveragePrice, y = `Total Volume`)) +
+  geom_point()
+```
+
+```{r}
+avocado_clean_year %>%
+  ggplot(aes(y = AveragePrice, x = year_2015)) +
+  geom_point()
+```
+
+```{r}
+avocado_clean_year %>%
+  ggplot(aes(x = year_2015, y = AveragePrice))
+geom_boxplot()
+```
+
+```{r}
+avocado_clean_year <-
+  avocado_clean_year %>%
+  select(-region)
+
+ggpairs(avocado_clean_year)
+
+```
+
+
+
+```{r}
+avocado_clean_year %>%
+  ggplot(aes(x = AveragePrice, y = `Small Bags`)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+
+```
+
+```{r}
+model <- lm(AveragePrice ~ `Small Bags` + `Total Volume`, data = avocado_clean_year)
+par(mfrow = c(2,2))
+plot(model)
+```
+
+```{r}
+summary(model)
+```
+
+```{r}
+avocado_clean_year %>%
+  ggplot(aes(x = AveragePrice, y = `Total Volume`, color = organic)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+```{r}
+model2 <-
+  lm(AveragePrice ~ )
+```
+
