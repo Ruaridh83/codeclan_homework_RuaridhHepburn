@@ -1,0 +1,109 @@
+---
+title: "Homework Quiz"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+    css: ../../../../styles.css
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. I want to predict how well 6 year-olds are going to do in their final school exams. Using the following variables am I likely under-fitting, fitting well or over-fitting? Postcode, gender, reading level, score in maths test, date of birth, family income.
+
+Well fitting.  However there are some protected characteristics ie gender that raises some ethical questions about whether or not they should be included.  This model would be quite biased against for example, high achieving boys from low income areas and houses.    
+
+
+2. If I have two models, one with an AIC score of 34,902 and the other with an AIC score of 33,559 which model should I use?
+
+AIC & BIC lower is better so 33559 would indicate a better model. 
+
+3. I have two models, the first with: r-squared: 0.44, adjusted r-squared: 0.43. The second with: r-squared: 0.47, adjusted r-squared: 0.41. Which one should I use?
+
+The first as a higher adjusted r-squared (even though the r-squared is lower) indicates a better goodness of fit.  
+
+4. I have a model with the following errors: RMSE error on test set: 10.3, RMSE error on training data: 10.4. Do you think this model is over-fitting?
+
+The test and train errors are similar which means you've not over fitted.  If you've over fitted, they'd vary by alot more than .1 in 10. 
+
+
+5. How does k-fold validation work?
+
+It evaluates how good a model is by splitting the data up into say 10 groups, removing 1 of them, running the model on the other 9 groups and then using the results to see how close the model models the 10th group we left out at the start.  This is repeated until each of the individual groups has had the chance to be the left over. 
+
+
+6. What is a validation set? When do you need one?
+
+It's a data set or rather an extraction from a data set you don't use to test or train a model that you then run the model on to see how good it is.  
+
+
+7. Describe how backwards selection works.
+
+start with all the possible predictors and then remove the least useful predictors one at a time, testing by seeing which one lowers the r2 variable the least.  
+
+
+8. Describe how best subset selection works.
+
+
+
+
+9. It is estimated on 5% of model projects end up being deployed. What actions can you take to maximise the likelihood of your model being deployed?
+
+1. Make sure it's answering the question that matters, spend time understanding the problem, the variables at play and how best to address it. Define the problem.
+
+2. Thorough evaluation/validation using different techniques, test and training sets, k fold validation.
+
+3. Avoid overfitting. 
+
+4. Continuously monitor performance. 
+
+5. make sure you're not using any protected/disallowed variables. 
+
+
+10. What metric could you use to confirm that the recent population is similar to the development population?
+
+PSI and CSI
+
+
+11. How is the Population Stability Index defined? What does this mean in words?
+
+Population Stability Index (PSI) compares the distribution of a scoring variable (predicted probability) in scoring data set to a training data set that was used to develop the model.
+
+PSI = (% of records based on scoring variable in Scoring Sample (A) - % of records based on scoring variable in Training Sample (B)) * In(A/ B)
+
+
+12. Above what PSI value might we need to start to consider rebuilding or recalibrating the model
+
+PSI < 0.1 - No change. You can continue using existing model.
+PSI >=0.1 but less than 0.2 - Slight change is required.
+PSI >=0.2 - Significant change is required. Ideally, you should not use this model any more.
+
+13. What are the common errors that can crop up when implementing a model?
+
+
+
+
+14. After performance monitoring, if we find that the discrimination is still satisfactory but the accuracy has deteriorated, what is the recommended action?
+
+Recalibrate rather than rebuild, look into why the shift has taken place, adjust the model, test it and go again. 
+
+
+15. Why is it important to have a unique model identifier for each model?
+
+So that you know which verion of your model is which and to allow you to compare them for accuracy/bias etc. Also it's just good governance, you might leave the job and someone else has to figure out what's going on with the model, how it runs, what it's using to arrive at tit's conclusions etc. 
+
+
+16. Why is it important to document the modelling rationale and approach?
+
+To mitigate the risk of your model becoming sentient, deciding that the existence of humans is a threat to it's own wellbeing and engage in a catastrophic battle for the future.  I'm writing a screenplay about it.  in seriousness though...
+
+1. To make sure the model is still accurate. 
+2. making it easy for others to understand what it's doing and why. 
+3. 
+
+
