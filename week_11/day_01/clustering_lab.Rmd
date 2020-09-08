@@ -1,0 +1,130 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(cluster)
+library(factoextra)
+library(dendextend)
+library(broom)
+library(animation)
+```
+
+```{r}
+computers
+
+```
+
+```{r}
+computers %>%
+  ggplot(aes(x = hd, y = ram)) +
+  geom_point()
+```
+in answer to the suitability to cluster.... I dunno, kinda.....Logic is telling me yes otherwise what's the point in the hiomework but looking at the data it looks a bit organised and non linear.  So....who knows?? Yes i suppose it is, there's visually soe grouping on the y axis (RAM) around like 4, 8, 16 (GB?) with a wider spread on the x axis.
+
+```{r}
+computers_clean <- computers %>%
+  select(c(ram, hd))
+
+computers_clean
+```
+```{r}
+summary(computers_clean)
+```
+
+
+First i'm gonna scale the data.   
+
+```{r}
+computers_scale <- computers_clean %>%
+  mutate_all(scale)
+```
+
+```{r}
+computers_scale
+```
+
+```{r}
+clustered_computers <- kmeans(computers_scale, centers =  4, nstart = 25)
+
+clustered_computers
+```
+Next i'm going to use 
+
+Tidy
+
+Glance 
+
+Augments
+
+to have a look at the clusters and the data contained within in a bit more detail. 
+
+Here i'm looking at info about the mean and the size of each cluster. 
+```{r}
+tidy(clustered_computers, 
+     col.names = colnames(computers_scale))
+```
+Now i'm looking at info about the full clustering. 
+
+```{r}
+glance(clustered_computers)
+```
+This function shows me which cluster each data point has been added to.  (comparing the new data i've clustered with the old data. )
+```{r}
+augment(clustered_computers, computers)
+```
+
+```{r}
+computers_scale %>%
+  kmeans.ani(centers = 4)
+```
+Now i'm going to look at how many clusters i need in order to have the max heterogenity. 
+
+```{r}
+max_k <- 20
+
+k_clusters <- tibble(k = 1:max_k) %>%
+  mutate(
+    kclust = map(k, ~ kmeans(computers_scale, .x, nstart = 25)),
+    tidied = map(kclust, tidy),
+    glanced = map(kclust, glance),
+    augmented = map(kclust, augment, computers)
+  )
+
+k_clusters
+
+```
+unpacking the tibble to have a look at the tot.withinss which is my key variable. 
+```{r}
+comp_clusterings <- k_clusters %>%
+  unnest(glanced)
+
+comp_clusterings
+```
+
+```{r}
+ggplot(comp_clusterings, aes(x=k, y=tot.withinss)) +
+  geom_point() +
+    geom_line() +
+    scale_x_continuous(breaks = seq(1, 20, by = 1))
+```
+
+as i predicted....4. so the plot. below is as good as it gets. 
+
+```{r}
+computers_scale %>%
+  kmeans.ani(centers = 4)
+```
+
+```{r}
+comp_clusterings %>% 
+  unnest(cols = c(augmented)) %>%
+  filter(k <= 4) %>%
+ ggplot(aes(x = ram, y = hd)) +
+  geom_point(aes(color = .cluster)) + 
+  facet_wrap(~ k)
+```
+
+still unsure if clustering was suitable given the weird distribution.  k = 3 might have been an option too. 
