@@ -1,0 +1,55 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(janitor)
+library(cluster)
+library(factoextra)
+library(dendextend)
+```
+
+Hierarchical Clustering. 
+
+Hierarchical Clustering is a machine learning process by which things; data, genes, Simpsons characters, are seperated into different groups with shared characteristics - clusters. 
+
+The individual clusters are distinct from each other and the things within the cluster are broadly similar, or at least share some characteristics.  
+
+It is commonly used to analyse social media data as once you're in a cluster, you're easier to market to.  Have you ever wondered why all you get on facebook are videos that reinforce your belief structures and world view??  You've been clustered!!
+
+There are two types of hierarchical clustering, divisive, a word which dances delicately off the tongue and agglomerative, a word so hard to pronounce it could be a cruel linguistic joke.  
+
+When employing divise hierarchical clustering, you start with all the objects and then partition them into two groups that are most different,  this is repeated until you're left with one object per observation.  You're looking at how different they are.  
+
+Agglomerative you start with each observation on it's own and then lump them together with the ones most similar to it.  So you're looking at how similar they are.  
+
+Often this process is illustrated with something called a Dendrogram.  
+
+```{r}
+mortgage
+```
+
+```{r}
+mortgage <- tibble::rowid_to_column(mortgage, "ID") 
+
+```
+
+```{r}
+mort_matrix <- mortgage %>%
+              select(TUScore) %>%
+              dist(method = "euclidean") 
+```
+
+Behold a dendrogram.  Few at the top, many at the bottom, infact 1000 at the bottom, an entry for each observation, then they get bunched in with their similar pals as we head upwards. 
+
+```{r}
+mort_clusters <- mort_matrix %>%
+  hclust(method = "complete") %>%
+  plot(cex = .01, hang = -100, main = "Credit Score Clusters  
+       Or how i learned to stop worrying and love Dendrograms", sub = "", xlab = "Customers", ylab = "height")
+
+```
+
+The key thing to look at is the height of the join, that indicates the distance between the obesrvations. As the vertical lines get shorter, than indicates the observations are getting more similar. 
+
