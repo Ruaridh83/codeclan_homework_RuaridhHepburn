@@ -1,0 +1,161 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+```{r}
+library(rpart)
+library(rpart.plot)
+library(tidyverse)
+library(janitor)
+library(tidyverse)
+titanic_set <- read_csv('titanic_decision_tree_data.csv')
+
+shuffle_index <- sample(1:nrow(titanic_set))
+
+# shuffle the data so class order isn't in order - need this for training/testing split later on 
+titanic_set <- titanic_set[shuffle_index, ]
+
+```
+
+```{r}
+titanic_set
+
+```
+
+```{r}
+titanic_clean <- titanic_set %>%
+  clean_names()
+```
+
+```{r}
+titanic_clean <- titanic_set %>%
+  drop_na()
+
+```
+
+```{r}
+summary(titanic_clean)
+```
+
+```{r}
+titanic_cleans <- titanic_set%>%
+  filter(survived %in% c(0,1)) %>%
+# Convert to factor level
+    mutate(sex = as.factor(sex), 
+           age_status = as.factor(if_else(age <= 16, "child", "adult")),
+           
+         class = factor(pclass, levels = c(3,2,1), labels = c("Lower", "Middle", "Upper")), 
+         
+           survived_flag = factor(survived, levels = c(0,1), labels = c("No", "Yes")), 
+         
+           port_embarkation = as.factor(embarked)) %>%
+  
+  select(sex, age_status, class, port_embarkation, sib_sp, parch, survived_flag) %>%
+  na.omit()
+
+```
+
+```{r}
+titanic_cleans
+```
+
+```{r}
+titanic_cleans %>%  
+  group_by(class) %>%  
+  filter(survived_flag == "No") %>%
+  summarise(num_each_class = n()) %>%  
+  ggplot(aes(x = class, y = num_each_class)) +  
+  geom_col()
+```
+
+```{r}
+titanic_cleans %>%  
+  group_by(port_embarkation) %>%  
+  filter(survived_flag == "No") %>%
+  summarise(num_each_port = n()) %>%  
+  ggplot(aes(x = port_embarkation, y = num_each_port)) +  
+  geom_col()
+```
+
+```{r}
+titanic_cleans %>%  
+  group_by(sex) %>%  
+  filter(survived_flag == "No") %>%
+  summarise(num_each_sex = n()) %>%  
+  ggplot(aes(x = sex, y = num_each_sex)) +  
+  geom_col()
+
+titanic_cleans %>%  
+  group_by(sex) %>%  
+  summarise(num_each_sex = n()) %>%  
+  ggplot(aes(x = sex, y = num_each_sex, fill = survived_flag)) + 
+  geom_col()
+```
+
+```{r}
+summary(titanic_cleans)
+
+
+
+```
+I'm dividing up the data into test and train so i can see if my tree is going to accurately predict death. 
+
+```{r}
+# get how many rows we have in total to work out the percentage
+n_data <- nrow(titanic_cleans)
+
+# create a test sample index, i chose 1/5 as seems reasonable given the size of the dataset. 
+test_index <- sample(1:n_data, size = n_data*0.2)
+
+# create test set
+titanic_test  <- slice(titanic_cleans, test_index)
+
+# create training set
+titanic_train <- slice(titanic_cleans, -test_index)
+```
+
+Now checking each of them. 
+
+```{r}
+titanic_test %>%
+  tabyl(survived_flag)
+```
+
+```{r}
+titanic_train %>%
+  tabyl(survived_flag)
+```
+
+they're within 4% of each other so not super accurate but good enough. 
+
+```{r}
+titanic_tree <- rpart(survived_flag ~., 
+                      data = titanic_train, 
+                      method = "class")
+
+rpart.plot(titanic_tree, yesno = 2)
+```
+
+```{r}
+titanic_tree_test <- rpart(survived_flag ~., 
+                      data = titanic_test, 
+                      method = "class")
+
+rpart.plot(titanic_tree_test, yesno = 2)
+```
+
+```{r}
+rpart.rules(titanic_tree, cover = T)
+rpart.rules(titanic_tree_test, cover = T)
+```
+
+Class had the biggest effect.  
+
+
+```{r}
+
+```
+
