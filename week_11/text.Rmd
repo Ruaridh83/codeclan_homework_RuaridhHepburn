@@ -1,0 +1,133 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(janeaustenr)
+library(tidyverse)
+library(tidytext)
+```
+
+```{r}
+austen_books()
+```
+Find the most common words in both Pride & Prejudice and Sense & Sensibility.
+```{r}
+pride <- austen_books() %>%
+  filter(book == "Pride & Prejudice")
+```
+
+```{r}
+Pride_words <- 
+  pride %>%
+  unnest_tokens(word, text)
+
+Pride_words
+```
+
+```{r}
+pride_count <- Pride_words %>%
+  group_by(word) %>%
+  summarise(count = n()) 
+
+pride_count
+```
+
+```{r}
+pride_count %>%
+  arrange(desc(count)) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = word, y = count)) +
+  geom_col() +
+  ggsave("pride_with_stop.jpg")
+```
+
+```{r}
+Pride_words %>%
+  anti_join(stop_words) %>%
+  count(word, sort = T) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  ggsave("pride_most_common.jpg")
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+sense <- austen_books() %>%
+  filter(book == "Sense & Sensibility")
+```
+
+```{r}
+sense_words <- 
+  sense %>%
+  unnest_tokens(word, text)
+
+sense_words
+```
+
+```{r}
+sense_count <- sense_words %>%
+  group_by(word) %>%
+  summarise(count = n()) 
+
+sense_count
+```
+
+```{r}
+sense_words %>%
+  anti_join(stop_words) %>%
+  count(word, sort = T) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  ggsave("sense_most_common.jpg")
+```
+
+```{r}
+sense_words_sent <- sense_words %>%
+  anti_join(stop_words) %>%
+  left_join(get_sentiments("bing"))
+
+sense_words_sent
+```
+
+```{r}
+sense_words_sent %>%
+  count(word, sentiment, sort = T) %>%
+  drop_na() %>%
+  slice(1:10) %>%
+  ggplot(aes(x = word, y = n, fill = sentiment)) +
+  geom_col() +
+  ggsave("sense_sentiment.jpg")
+
+  
+```
+
+```{r}
+jane <- austen_books() %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words) %>%
+  left_join(get_sentiments("bing"))
+
+jane
+```
+
+```{r}
+jane %>%
+  count(word, sentiment, sort = T) %>%
+  drop_na() %>%
+  slice(1:20) %>%
+  ggplot(aes(x = word, y = n, fill = sentiment)) +
+  theme(axis.text.x=element_text(angle=45, hjust=1)) +
+  geom_col() 
+
+
+```
+
